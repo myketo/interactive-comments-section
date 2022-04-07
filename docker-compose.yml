@@ -1,10 +1,11 @@
 version: '3.8'
 services:
   php:
+    container_name: app_php
     image: yiisoftware/yii2-php:8.1-apache
     volumes:
       - ~/.composer-docker/cache:/root/.composer/cache:delegated
-      - ./:/app:delegated
+      - ./:/app
     ports:
       - '8000:80'
     environment:
@@ -14,8 +15,9 @@ services:
       MYSQL_DB: challange
 
   mysql:
+    container_name: app_db
     image: mysql:latest
-    command: --default-authentication-plugin=mysql_native_password
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
     restart: always
     volumes:
       - yii-mysql-data:/var/lib/mysql
@@ -24,6 +26,7 @@ services:
       MYSQL_DATABASE: challange
 
   phpmyadmin:
+    container_name: app_pma
     image: phpmyadmin/phpmyadmin:latest
     ports:
       - '8888:80'
