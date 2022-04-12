@@ -2,16 +2,16 @@
 
 namespace app\controllers;
 
-use app\models\User;
+use app\models\Comment;
 use yii\data\ActiveDataProvider;
 use yii\rest\ActiveController;
 use yii\rest\IndexAction;
 
-class UserController extends ActiveController
+class CommentController extends ActiveController
 {
-    public $modelClass = User::class;
+    public $modelClass = Comment::class;
 
-    public function actions(): array
+    public function actions()
     {
         $actions = parent::actions();
 

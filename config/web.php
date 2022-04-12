@@ -54,6 +54,9 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 ['class' => UrlRule::class, 'controller' => 'user'],
+                ['class' => UrlRule::class, 'controller' => 'comment'],
+
+                ['<url:(.*)>' => 'site/index'],
             ],
         ],
     ],

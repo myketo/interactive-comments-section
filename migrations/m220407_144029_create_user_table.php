@@ -3,7 +3,7 @@
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `{{%user}}`.
+ * Handles the creation of table `user`.
  */
 class m220407_144029_create_user_table extends Migration
 {
@@ -14,7 +14,7 @@ class m220407_144029_create_user_table extends Migration
     {
         $this->createTable('user', [
             'id' => $this->primaryKey(),
-            'username' => $this->string(),
+            'username' => $this->string()->notNull()->unique(),
             'created_at' => $this->timestamp()->defaultExpression('CURRENT_TIMESTAMP'),
             'updated_at' => $this->timestamp()->append('ON UPDATE CURRENT_TIMESTAMP'),
         ]);
@@ -25,6 +25,6 @@ class m220407_144029_create_user_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('{{%user}}');
+        $this->dropTable('user');
     }
 }
