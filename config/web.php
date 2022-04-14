@@ -56,7 +56,7 @@ $config = [
                 ['class' => UrlRule::class, 'controller' => 'user'],
                 ['class' => UrlRule::class, 'controller' => 'comment'],
 
-                ['<url:(.*)>' => 'site/index'],
+                '<url:(.*)>' => 'site/index',
             ],
         ],
     ],

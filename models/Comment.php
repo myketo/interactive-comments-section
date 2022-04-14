@@ -90,4 +90,24 @@ class Comment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
+
+    /**
+     * Overwriting parent's fields method to remove user_id and add the whole User object.
+     */
+    public function fields(): array
+    {
+        $fields = parent::fields();
+
+        $position = array_search('user_id', array_keys($fields), true) + 1;
+        unset($fields['user_id']);
+
+        return array_slice($fields, 0, $position, true)
+            + ['user' => 'user']
+            + array_slice(
+                $fields,
+                $position,
+                count($fields) - $position,
+                true
+            );
+    }
 }
