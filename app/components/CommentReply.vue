@@ -18,6 +18,16 @@
     border: none;
     background: none;
 
+    > * {
+      transition: filter 0.2s ease-in-out;
+    }
+
+    &:hover {
+      > * {
+        filter: opacity(0.33) drop-shadow(0 0 0 $light-grayish-blue);
+      }
+    }
+
     .reply-icon {
       margin-right: 0.5em;
     }

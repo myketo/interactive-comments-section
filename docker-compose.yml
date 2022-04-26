@@ -12,7 +12,7 @@ services:
       MYSQL_HOST: mysql
       MYSQL_USER: root
       MYSQL_PASSWORD: secret
-      MYSQL_DB: challange
+      MYSQL_DB: challenge
 
   mysql:
     container_name: app_db
@@ -23,7 +23,8 @@ services:
       - yii-mysql-data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: secret
-      MYSQL_DATABASE: challange
+      MYSQL_DATABASE: challenge
+      TZ: Europe/Warsaw
 
   phpmyadmin:
     container_name: app_pma

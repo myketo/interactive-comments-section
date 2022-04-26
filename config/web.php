@@ -1,5 +1,6 @@
 <?php
 
+use app\models\UserAuth;
 use yii\web\JsonParser;
 use yii\rest\UrlRule;
 
@@ -9,7 +10,10 @@ $db = require __DIR__ . '/db.php';
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => [
+        'log',
+        'app\bootstrap\DefaultUserBootstrap',
+    ],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
@@ -26,7 +30,7 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
+            'identityClass' => UserAuth::class,
             'enableAutoLogin' => true,
         ],
         'errorHandler' => [
@@ -54,7 +58,13 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 ['class' => UrlRule::class, 'controller' => 'user'],
-                ['class' => UrlRule::class, 'controller' => 'comment'],
+                [
+                    'class' => UrlRule::class,
+                    'controller' => 'comment',
+                    'extraPatterns' => [
+                        'PATCH <commentId>/update-score' => 'update-score',
+                    ],
+                ],
 
                 '<url:(.*)>' => 'site/index',
             ],

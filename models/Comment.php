@@ -17,11 +17,14 @@ use yii\db\ActiveQuery;
  * @property string|null $updated_at
  *
  * @property Comment[] $comments
+ * @property CommentVote[] $commentVotes
  * @property Comment $parentComment
  * @property User $user
  */
 class Comment extends \yii\db\ActiveRecord
 {
+    public array $userVotes = [];
+
     /**
      * {@inheritdoc}
      */
@@ -72,6 +75,16 @@ class Comment extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[CommentVotes]].
+     *
+     * @return ActiveQuery
+     */
+    public function getCommentVotes(): ActiveQuery
+    {
+        return $this->hasMany(CommentVote::class, ['comment_id' => 'id']);
+    }
+
+    /**
      * Gets query for [[ParentComment]].
      *
      * @return ActiveQuery
@@ -93,15 +106,33 @@ class Comment extends \yii\db\ActiveRecord
 
     /**
      * Overwriting parent's fields method to remove user_id and add the whole User object.
+     *
+     * @return string[]
      */
     public function fields(): array
     {
         $fields = parent::fields();
 
-        $position = array_search('user_id', array_keys($fields), true) + 1;
-        unset($fields['user_id']);
+        $this->addUserField($fields);
+        $this->addUserVotesField($fields);
 
-        return array_slice($fields, 0, $position, true)
+        return $fields;
+    }
+
+    /**
+     * Adding the user field to return more data about the user than just his ID.
+     *
+     * @param $fields
+     * @return void
+     */
+    private function addUserField(&$fields): void
+    {
+        // Finding the index of user_id field.
+        $position = array_search('user_id', array_keys($fields), true) + 1;
+
+        // Replacing the user_id field with the user model.
+        unset($fields['user_id']);
+        $fields = array_slice($fields, 0, $position, true)
             + ['user' => 'user']
             + array_slice(
                 $fields,
@@ -109,5 +140,23 @@ class Comment extends \yii\db\ActiveRecord
                 count($fields) - $position,
                 true
             );
+    }
+
+    /**
+     * Gets all comment votes and vote's users and assigns it to the model as a field.
+     *
+     * @param $fields
+     * @return void
+     */
+    private function addUserVotesField(&$fields): void
+    {
+        $fields['user_votes'] = 'userVotes';
+
+        $userVotes = [];
+        foreach ($this->commentVotes as $commentVote) {
+            $userVotes[$commentVote->user_id] = (int)$commentVote->status;
+        }
+
+        $this->userVotes = $userVotes;
     }
 }

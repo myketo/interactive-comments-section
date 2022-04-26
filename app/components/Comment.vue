@@ -63,6 +63,7 @@ export default {
     width: 100%;
     padding: 1em;
     border-radius: 0.33em;
+    margin-bottom: 1em;
 
     .comment__top-section {
       display: flex;

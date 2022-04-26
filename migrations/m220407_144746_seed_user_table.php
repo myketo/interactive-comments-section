@@ -26,12 +26,15 @@ class m220407_144746_seed_user_table extends Migration
      * Adding users defined in the challenge's JSON file to the `user` table.
      *
      * @return void
+     * @throws \yii\base\Exception
      */
     private function insertChallengeUsers(): void
     {
         foreach ($this->challengeUsers as $challengeUser) {
             $this->insert('user', [
                 'username' => $challengeUser,
+                'password_hash' => password_hash('kanapka', PASSWORD_DEFAULT),
+                'auth_key' => \Yii::$app->security->generateRandomString(),
             ]);
         }
     }

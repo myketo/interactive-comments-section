@@ -13,21 +13,18 @@ export default {
     CommentsSection,
   },
 
-  data() {
-    return {
-      currentUser: Object,
+  methods: {
+    // Finds user with selected ID and stores his data as currentUser in local storage.
+    async storeCurrentUser() {
+      const currentUserId = 1
+      const currentUser = await api.helpGet(`users/${currentUserId}`)
+
+      localStorage.currentUser = JSON.stringify(currentUser)
     }
   },
 
   async beforeMount() {
-    if (localStorage.currentUser) {
-      this.currentUser = JSON.parse(localStorage.currentUser)
-    } else {
-      const currentUserId = 1
-
-      this.currentUser = await api.helpGet(`users/${currentUserId}`)
-      localStorage.currentUser = JSON.stringify(this.currentUser)
-    }
+    await this.storeCurrentUser()
   },
 }
 </script>

@@ -1,8 +1,6 @@
 <template>
   <div class="comments-section">
-<!--    <comment v-for="comment in comments" :key="comment.id" :data="comment"></comment>-->
-    <comment :data="comments[0]"></comment>
-    <br>
+    <comment v-for="comment in comments" :key="comment.id" :data="comment"></comment>
   </div>
 </template>
 
