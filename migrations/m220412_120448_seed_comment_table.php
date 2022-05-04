@@ -31,7 +31,7 @@ class m220412_120448_seed_comment_table extends Migration
             'content' => "I couldn't agree more with this. Everything moves so fast and it always seems like everyone knows the newest library/framework. But the fundamentals are what stay constant.",
             'score' => 2,
             'user_id' => 1,
-            'parent_comment_id' => 2,
+            'parent_comment_id' => 3,
             'created_at' => 'NOW() - INTERVAL 2 DAY',
         ],
     ];

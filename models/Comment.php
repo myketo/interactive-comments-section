@@ -24,6 +24,7 @@ use yii\db\ActiveQuery;
 class Comment extends \yii\db\ActiveRecord
 {
     public array $userVotes = [];
+    public string $parentCommentAuthor = '';
 
     /**
      * {@inheritdoc}
@@ -114,9 +115,34 @@ class Comment extends \yii\db\ActiveRecord
         $fields = parent::fields();
 
         $this->addUserField($fields);
+        $this->addParentCommentAuthor($fields);
         $this->addUserVotesField($fields);
 
         return $fields;
+    }
+
+    private function addParentCommentAuthor(&$fields): void
+    {
+        // Only adding the field when there is a parent comment.
+        if (!$this->parentComment) {
+            return;
+        }
+
+        // Finding the index of parent_comment_id field.
+        $position = array_search('parent_comment_id', array_keys($fields), true) + 1;
+
+        // Adding the parent_comment_author field after parent_comment_id.
+        $fields = array_slice($fields, 0, $position, true)
+            + ['parent_comment_author' => 'parentCommentAuthor']
+            + array_slice(
+                $fields,
+                $position,
+                count($fields) - $position,
+                true
+            );
+
+        // Setting field's value.
+        $this->parentCommentAuthor = $this->parentComment->user->username;
     }
 
     /**
