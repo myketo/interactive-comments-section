@@ -9,10 +9,12 @@
       </div>
 
       <div class="comment__middle-section">
-        <p class="message">
+        <p class="message" v-show="!showEditCommentField">
           <span class="response-to" v-if="isResponse()">@{{ data.parent_comment_author }}</span>
           {{ data.content }}
         </p>
+        <textarea class="message-edit" @input="mixinTextareaAutoResize" ref="commentEdit" v-show="showEditCommentField">@{{ data.parent_comment_author }} {{ data.content }}</textarea>
+        <big-button action="edit" v-show="showEditCommentField" @editComment="editComment()"></big-button>
       </div>
 
       <div class="comment__bottom-section">
@@ -21,7 +23,7 @@
         <comment-button action="reply" v-if="!isCurrentUser()"></comment-button>
         <div class="current-user-buttons" v-else>
           <comment-button action="delete"></comment-button>
-          <comment-button action="edit"></comment-button>
+          <comment-button action="edit" @showEditComment="toggleShowEditCommentField()"></comment-button>
         </div>
       </div>
     </div>
@@ -31,14 +33,22 @@
 <script>
 import CommentScore from './CommentScore';
 import CommentButton from './CommentButton';
+import BigButton from "./BigButton";
 
-import TimeAgo from 'javascript-time-ago'
-import en from 'javascript-time-ago/locale/en.json'
+import api from "../api";
+import mixinTextareaAutoResize from '../mixins/textareaAutoResize';
+
+import TimeAgo from 'javascript-time-ago';
+import en from 'javascript-time-ago/locale/en';
 TimeAgo.addDefaultLocale(en)
 const timeAgo = new TimeAgo('en-US')
 
 export default {
   name: "Comment",
+
+  mixins: [
+      mixinTextareaAutoResize,
+  ],
 
   props: {
     data: {
@@ -49,13 +59,14 @@ export default {
 
   data() {
     return {
-      parentCommentUsername: String,
+      showEditCommentField: false,
     }
   },
 
   components: {
     CommentScore,
     CommentButton,
+    BigButton,
   },
 
   methods: {
@@ -75,8 +86,40 @@ export default {
     },
     isResponse() {
       return this.data.parent_comment_id !== null
+    },
+    toggleShowEditCommentField() {
+      this.showEditCommentField = !this.showEditCommentField
+    },
+    editComment() {
+      const newContent = this.removeFirstWord(this.$refs.commentEdit.value)
+
+      if (newContent !== this.data.content) {
+        api.helpPatch(`comments/${this.data.id}`, { content: newContent })
+
+        this.data.content = newContent
+      }
+
+      this.toggleShowEditCommentField()
+    },
+    removeFirstWord(string) {
+      if (!this.data.parent_comment_id) {
+        return string;
+      }
+
+      const indexOfSpace = string.indexOf(' ');
+      if (indexOfSpace === -1) {
+        return '';
+      }
+
+      return string.substring(indexOfSpace + 1);
     }
   },
+
+  updated() {
+    if (this.showEditCommentField) {
+      this.$refs.commentEdit.dispatchEvent(new Event("input"))
+    }
+  }
 }
 </script>
 
@@ -130,12 +173,28 @@ export default {
         margin: 1em 0;
 
         .message {
+          color: $grayish-blue;
+
           .response-to {
             color: $moderate-blue;
             font-weight: $font-weight-medium;
           }
+        }
 
-          color: $grayish-blue;
+        .message-edit {
+          width: 100%;
+          height: fit-content;
+          overflow-y: hidden;
+          padding: 0.75em 1em;
+          border-color: $grayish-blue;
+          border-radius: 0.5em;
+          resize: none;
+          outline: none;
+          color: $dark-blue;
+
+          &:focus-visible {
+            border-color: $dark-blue;
+          }
         }
       }
 
@@ -143,6 +202,10 @@ export default {
         display: flex;
         justify-content: space-between;
         align-items: center;
+
+        .current-user-buttons {
+          display: flex;
+        }
       }
     }
   }

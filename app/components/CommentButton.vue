@@ -1,5 +1,9 @@
 <template>
-  <button class="comment-button" :class="'comment-button__' + action">
+  <button
+      class="comment-button"
+      :class="'comment-button__' + action"
+      @click="emitAction()"
+  >
     <img
         :src="`/images/icon-${action}.svg`"
         :alt="action + ' icon'"
@@ -12,7 +16,7 @@
 
 <script>
 export default {
-  name: "CommentReply",
+  name: "CommentButton",
 
   props: {
     action: {
@@ -23,6 +27,18 @@ export default {
       },
     },
   },
+
+  emits: [
+    'showEditComment',
+  ],
+
+  methods: {
+    emitAction() {
+      const action = this.action.charAt(0).toUpperCase() + this.action.slice(1);
+
+      this.$emit(`show${action}Comment`)
+    }
+  },
 }
 </script>
 
@@ -32,6 +48,12 @@ export default {
 .comment-button {
   border: none;
   background: none;
+
+  &.comment-button__delete,
+  &.comment-button__edit {
+    display: flex;
+    align-items: center;
+  }
 
   > * {
     transition: filter 0.2s ease-in-out;
