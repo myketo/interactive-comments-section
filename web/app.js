@@ -19597,7 +19597,14 @@ var timeAgo = new javascript_time_ago__WEBPACK_IMPORTED_MODULE_6__["default"]('e
   },
   methods: {
     getImage: function getImage() {
-      return "../images/avatars/image-".concat(this.data.user.username, ".webp");
+      var currentUser = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+      var imageUser = this.data.user.username;
+
+      if (currentUser) {
+        imageUser = this.currentUser.username;
+      }
+
+      return "../images/avatars/image-".concat(imageUser, ".webp");
     },
     getImageAlt: function getImageAlt() {
       return "".concat(this.data.user.username, "'s avatar");
@@ -20027,6 +20034,13 @@ var _hoisted_11 = {
   key: 1,
   "class": "current-user-buttons"
 };
+var _hoisted_12 = {
+  "class": "comment"
+};
+var _hoisted_13 = {
+  "class": "comment__top-section"
+};
+var _hoisted_14 = ["src", "alt"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_comment_textarea = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("comment-textarea");
 
@@ -20095,23 +20109,29 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   })]))])])], 2
   /* CLASS */
   ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["comment-container", {
+    "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["comment-container new-reply", {
       'is-response': $options.isResponse(),
       'hidden': !$data.showReplyField
     }])
-  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_comment_textarea, {
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+    src: $options.getImage(true),
+    alt: $options.getImageAlt(),
+    "class": "user-avatar"
+  }, null, 8
+  /* PROPS */
+  , _hoisted_14), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_comment_textarea, {
     modelValue: $data.newReply,
     "onUpdate:modelValue": _cache[5] || (_cache[5] = function ($event) {
       return $data.newReply = $event;
     })
   }, null, 8
   /* PROPS */
-  , ["modelValue"]), [[vue__WEBPACK_IMPORTED_MODULE_0__.vShow, $data.showReplyField]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_big_button, {
+  , ["modelValue"]), [[vue__WEBPACK_IMPORTED_MODULE_0__.vShow, $data.showReplyField]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_big_button, {
     action: "reply",
     onReplyComment: _cache[6] || (_cache[6] = function ($event) {
       return $options.replyToComment();
     })
-  })], 2
+  })])], 2
   /* CLASS */
   ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_delete_comment_modal, {
     onCancelDelete: _cache[7] || (_cache[7] = function ($event) {
@@ -20441,7 +20461,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".comment-container[data-v-94aaaffc] {\n  padding-bottom: 1em;\n}\n.comment-container.is-response[data-v-94aaaffc] {\n  border-left: 2px solid #eaecf1;\n  padding-left: 1em;\n}\n.comment-container.hidden[data-v-94aaaffc] {\n  display: none;\n}\n.comment-container .comment[data-v-94aaaffc] {\n  background-color: white;\n  width: 100%;\n  padding: 1em;\n  border-radius: 0.33em;\n}\n.comment-container .comment .comment__top-section[data-v-94aaaffc] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n}\n.comment-container .comment .comment__top-section .user-avatar[data-v-94aaaffc] {\n  width: 2em;\n  min-width: 2em;\n  height: -webkit-fit-content;\n  height: -moz-fit-content;\n  height: fit-content;\n}\n.comment-container .comment .comment__top-section .username[data-v-94aaaffc] {\n  font-weight: 500;\n}\n.comment-container .comment .comment__top-section .is-you[data-v-94aaaffc] {\n  background-color: #5457b6;\n  color: white;\n  border-radius: 2px;\n  padding: 0 0.55em 0.05em 0.55em;\n  font-weight: 500;\n  margin-left: -0.4em;\n}\n.comment-container .comment .comment__top-section .created_time_ago[data-v-94aaaffc] {\n  color: #67727e;\n}\n.comment-container .comment .comment__middle-section[data-v-94aaaffc] {\n  margin: 1em 0;\n}\n.comment-container .comment .comment__middle-section .message[data-v-94aaaffc] {\n  color: #67727e;\n}\n.comment-container .comment .comment__middle-section .message .response-to[data-v-94aaaffc] {\n  color: #5457b6;\n  font-weight: 500;\n}\n.comment-container .comment .comment__bottom-section[data-v-94aaaffc] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.comment-container .comment .comment__bottom-section .current-user-buttons[data-v-94aaaffc] {\n  display: flex;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".comment-container[data-v-94aaaffc] {\n  padding-bottom: 1em;\n}\n.comment-container.is-response[data-v-94aaaffc] {\n  border-left: 2px solid #eaecf1;\n  padding-left: 1em;\n}\n.comment-container.hidden[data-v-94aaaffc] {\n  display: none;\n}\n.comment-container.new-reply .comment .comment__top-section[data-v-94aaaffc] {\n  align-items: flex-start;\n}\n.comment-container.new-reply .comment .comment__top-section .user-avatar[data-v-94aaaffc] {\n  width: 2.5em;\n  min-width: 2.5em;\n}\n.comment-container .comment[data-v-94aaaffc] {\n  background-color: white;\n  width: 100%;\n  padding: 1em;\n  border-radius: 0.33em;\n}\n.comment-container .comment .comment__top-section[data-v-94aaaffc] {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n}\n.comment-container .comment .comment__top-section .user-avatar[data-v-94aaaffc] {\n  width: 2em;\n  min-width: 2em;\n  height: -webkit-fit-content;\n  height: -moz-fit-content;\n  height: fit-content;\n}\n.comment-container .comment .comment__top-section .username[data-v-94aaaffc] {\n  font-weight: 500;\n}\n.comment-container .comment .comment__top-section .is-you[data-v-94aaaffc] {\n  background-color: #5457b6;\n  color: white;\n  border-radius: 2px;\n  padding: 0 0.55em 0.05em 0.55em;\n  font-weight: 500;\n  margin-left: -0.4em;\n}\n.comment-container .comment .comment__top-section .created_time_ago[data-v-94aaaffc] {\n  color: #67727e;\n}\n.comment-container .comment .comment__middle-section[data-v-94aaaffc] {\n  margin: 1em 0;\n}\n.comment-container .comment .comment__middle-section .message[data-v-94aaaffc] {\n  color: #67727e;\n  word-break: break-word;\n}\n.comment-container .comment .comment__middle-section .message .response-to[data-v-94aaaffc] {\n  color: #5457b6;\n  font-weight: 500;\n}\n.comment-container .comment .comment__bottom-section[data-v-94aaaffc] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.comment-container .comment .comment__bottom-section .current-user-buttons[data-v-94aaaffc] {\n  display: flex;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

@@ -30,9 +30,15 @@
     </div>
   </div>
 
-  <div class="comment-container" :class="{ 'is-response': isResponse(), 'hidden': !showReplyField }">
-    <comment-textarea v-show="showReplyField" v-model="newReply"></comment-textarea>
-    <big-button action="reply" @replyComment="replyToComment()"></big-button>
+  <div class="comment-container new-reply" :class="{ 'is-response': isResponse(), 'hidden': !showReplyField }">
+    <div class="comment">
+      <div class="comment__top-section">
+        <img :src="getImage(true)" :alt="getImageAlt()" class="user-avatar" />
+        <comment-textarea v-show="showReplyField" v-model="newReply"></comment-textarea>
+      </div>
+
+      <big-button action="reply" @replyComment="replyToComment()"></big-button>
+    </div>
   </div>
 
   <delete-comment-modal
@@ -95,8 +101,12 @@ export default {
   },
 
   methods: {
-    getImage() {
-      return `../images/avatars/image-${this.data.user.username}.webp`;
+    getImage(currentUser = false) {
+      let imageUser = this.data.user.username
+      if (currentUser) {
+        imageUser = this.currentUser.username
+      }
+      return `../images/avatars/image-${imageUser}.webp`;
     },
     getImageAlt() {
       return `${this.data.user.username}'s avatar`;
@@ -182,6 +192,19 @@ export default {
       display: none;
     }
 
+    &.new-reply {
+      .comment {
+        .comment__top-section {
+          align-items: flex-start;
+
+          .user-avatar {
+            width: 2.5em;
+            min-width: 2.5em;
+          }
+        }
+      }
+    }
+
     .comment {
       background-color: $white;
       width: 100%;
@@ -222,6 +245,7 @@ export default {
 
         .message {
           color: $grayish-blue;
+          word-break: break-word;
 
           .response-to {
             color: $moderate-blue;
