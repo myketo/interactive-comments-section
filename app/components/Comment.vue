@@ -23,7 +23,7 @@
 
         <comment-button action="reply" v-if="!isCurrentUser()" @showReplyComment="toggleShowReplyField()"></comment-button>
         <div class="current-user-buttons" v-else>
-          <comment-button action="delete"></comment-button>
+          <comment-button action="delete" @showDeleteComment="toggleShowDeleteCommentModal()"></comment-button>
           <comment-button action="edit" @showEditComment="toggleShowEditCommentField()"></comment-button>
         </div>
       </div>
@@ -34,6 +34,12 @@
     <comment-textarea v-show="showReplyField" v-model="newReply"></comment-textarea>
     <big-button action="reply" @replyComment="replyToComment()"></big-button>
   </div>
+
+  <delete-comment-modal
+    v-show="showDeleteCommentModal"
+    @cancelDelete="toggleShowDeleteCommentModal()"
+    @confirmDelete="deleteComment()"
+  ></delete-comment-modal>
 </template>
 
 <script>
@@ -41,6 +47,7 @@ import CommentScore from './CommentScore';
 import CommentButton from './CommentButton';
 import BigButton from "./BigButton";
 import CommentTextarea from "./CommentTextarea";
+import DeleteCommentModal from "./DeleteCommentModal";
 
 import api from "../api";
 
@@ -60,13 +67,14 @@ export default {
   },
 
   emits: [
-    "commentAdded",
+    "commentsUpdated",
   ],
 
   data() {
     return {
       showEditCommentField: false,
       showReplyField: false,
+      showDeleteCommentModal: false,
       editedContent: this.data.content,
       newReply: '',
     }
@@ -83,6 +91,7 @@ export default {
     CommentButton,
     BigButton,
     CommentTextarea,
+    DeleteCommentModal,
   },
 
   methods: {
@@ -127,7 +136,7 @@ export default {
         }
         api.helpPost('comments', data).then(() => {
           this.$nextTick(() => {
-            this.$emit('commentAdded')
+            this.$emit('commentsUpdated')
           })
         })
 
@@ -135,6 +144,24 @@ export default {
       }
 
       this.toggleShowReplyField()
+    },
+    toggleShowDeleteCommentModal() {
+      this.showDeleteCommentModal = !this.showDeleteCommentModal
+
+      if (this.showDeleteCommentModal) {
+        document.querySelector("body").style.overflow = "hidden"
+      } else {
+        document.querySelector("body").style.overflow = "initial"
+      }
+    },
+    deleteComment() {
+      api.helpDelete(`comments/${this.data.id}`).then(() => {
+        this.$nextTick(() => {
+          this.$emit('commentsUpdated')
+        })
+      })
+
+      this.toggleShowDeleteCommentModal()
     }
   },
 }

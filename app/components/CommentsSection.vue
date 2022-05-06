@@ -4,7 +4,7 @@
       v-for="comment in comments"
       :key="comment.id"
       :data="comment"
-      @commentAdded="loadComments">
+      @commentsUpdated="loadComments">
     </comment>
   </div>
 </template>
