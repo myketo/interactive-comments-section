@@ -47,6 +47,7 @@ class m220415_093930_create_comment_vote_table extends Migration
             'comment_id',
             'comment',
             'id',
+            'CASCADE',
         );
     }
 

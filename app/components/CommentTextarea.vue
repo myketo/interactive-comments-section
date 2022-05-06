@@ -18,9 +18,7 @@
     ],
 
     props: [
-      "content",
       "modelValue",
-      "ref",
     ],
 
     emits: [

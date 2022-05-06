@@ -1,14 +1,14 @@
 <template>
   <div class="comment-container" :class="{'is-response': isResponse()}">
     <div class="comment">
-      <div class="comment__top-section">
+      <div class="comment-section comment-section__top">
         <img :src="getImage()" :alt="getImageAlt()" class="user-avatar" />
         <p class="username">{{ data.user.username }}</p>
         <span class="is-you" v-if="isCurrentUser()">you</span>
         <p class="created_time_ago">{{ getCreatedTimeAgo() }}</p>
       </div>
 
-      <div class="comment__middle-section">
+      <div class="comment-section comment-section__middle">
         <p class="message" v-show="!showEditCommentField">
           <span class="response-to" v-if="isResponse()">@{{ data.parent_comment_author }}</span>
           {{ data.content }}
@@ -18,7 +18,7 @@
         <big-button action="edit" v-show="showEditCommentField" @editComment="editComment()"></big-button>
       </div>
 
-      <div class="comment__bottom-section">
+      <div class="comment-section comment-section__bottom">
         <comment-score :score="data.score"></comment-score>
 
         <comment-button action="reply" v-if="!isCurrentUser()" @showReplyComment="toggleShowReplyField()"></comment-button>
@@ -32,8 +32,8 @@
 
   <div class="comment-container new-reply" :class="{ 'is-response': isResponse(), 'hidden': !showReplyField }">
     <div class="comment">
-      <div class="comment__top-section">
-        <img :src="getImage(true)" :alt="getImageAlt()" class="user-avatar" />
+      <div class="comment-section comment-section__top">
+        <img :src="getImage(true)" :alt="getImageAlt(true)" class="user-avatar" />
         <comment-textarea v-show="showReplyField" v-model="newReply"></comment-textarea>
       </div>
 
@@ -106,10 +106,16 @@ export default {
       if (currentUser) {
         imageUser = this.currentUser.username
       }
+
       return `../images/avatars/image-${imageUser}.webp`;
     },
-    getImageAlt() {
-      return `${this.data.user.username}'s avatar`;
+    getImageAlt(currentUser = false) {
+      let imageUser = this.data.user.username
+      if (currentUser) {
+        imageUser = this.currentUser.username
+      }
+
+      return `${imageUser}'s avatar`;
     },
     getCreatedTimeAgo() {
       return timeAgo.format(new Date(this.data.created_at))
@@ -177,7 +183,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   @import "/scss/_variables.scss";
 
   .comment-container {
@@ -194,8 +200,10 @@ export default {
 
     &.new-reply {
       .comment {
-        .comment__top-section {
-          align-items: flex-start;
+        .comment-section {
+          &.comment-section__top {
+            align-items: flex-start;
+          }
 
           .user-avatar {
             width: 2.5em;
@@ -211,56 +219,58 @@ export default {
       padding: 1em;
       border-radius: 0.33em;
 
-      .comment__top-section {
-        display: flex;
-        align-items: center;
-        gap: 1em;
-
+      .comment-section {
         .user-avatar {
           width: 2em;
           min-width: 2em;
           height: fit-content;
         }
 
-        .username {
-          font-weight: $font-weight-medium;
-        }
+        &.comment-section__top {
+          display: flex;
+          align-items: center;
+          gap: 1em;
 
-        .is-you {
-          background-color: $moderate-blue;
-          color: $white;
-          border-radius: 2px;
-          padding: 0 0.55em 0.05em 0.55em;
-          font-weight: $font-weight-medium;
-          margin-left: -0.4em;
-        }
-
-        .created_time_ago {
-          color: $grayish-blue;
-        }
-      }
-
-      .comment__middle-section {
-        margin: 1em 0;
-
-        .message {
-          color: $grayish-blue;
-          word-break: break-word;
-
-          .response-to {
-            color: $moderate-blue;
+          .username {
             font-weight: $font-weight-medium;
           }
+
+          .is-you {
+            background-color: $moderate-blue;
+            color: $white;
+            border-radius: 2px;
+            padding: 0 0.55em 0.05em 0.55em;
+            font-weight: $font-weight-medium;
+            margin-left: -0.4em;
+          }
+
+          .created_time_ago {
+            color: $grayish-blue;
+          }
         }
-      }
 
-      .comment__bottom-section {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        &.comment-section__middle {
+          margin: 1em 0;
 
-        .current-user-buttons {
+          .message {
+            color: $grayish-blue;
+            word-break: break-word;
+
+            .response-to {
+              color: $moderate-blue;
+              font-weight: $font-weight-medium;
+            }
+          }
+        }
+
+        &.comment-section__bottom {
           display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          .current-user-buttons {
+            display: flex;
+          }
         }
       }
     }

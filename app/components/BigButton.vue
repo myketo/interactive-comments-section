@@ -1,6 +1,6 @@
 <template>
   <div class="big-button-container">
-    <button class="big-button" @click="$emit(`${action}Comment`)">
+    <button class="big-button" :class="`big-button__${action}`" @click="$emit(`${action}Comment`)">
       {{ action }}
     </button>
   </div>
@@ -15,7 +15,7 @@
         required: true,
         type: String,
         validator(value) {
-          return ['reply', 'delete', 'edit'].includes(value)
+          return ['reply', 'send', 'edit'].includes(value)
         },
       },
     },
@@ -38,6 +38,10 @@
       padding: 0.65em 1.25em;
       text-transform: uppercase;
       font-weight: $font-weight-medium;
+
+      &.big-button__send {
+        padding: 0.85em 2em;
+      }
     }
   }
 </style>
