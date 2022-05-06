@@ -8,6 +8,7 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\data\ActiveDataProvider;
 use yii\db\Exception;
+use yii\helpers\ArrayHelper;
 use yii\rest\ActiveController;
 use yii\rest\IndexAction;
 
@@ -22,16 +23,32 @@ class CommentController extends ActiveController
     {
         $actions = parent::actions();
 
-        $actions['index'] = [
-            'class' => IndexAction::class,
-            'modelClass' => $this->modelClass,
-            'prepareDataProvider' => fn() => new ActiveDataProvider([
-                'query' => $this->modelClass::find(),
-                'pagination' => false,
-            ]),
-        ];
+        unset($actions['index']);
 
         return $actions;
+    }
+
+    public function actionIndex(): array
+    {
+        $comments = $this->modelClass::find()
+            ->where(['IS', 'parent_comment_id', new yii\db\Expression('NULL')])
+            ->all();
+
+        $response = [];
+        $this->addReplies($comments, $response);
+
+        return $response;
+    }
+
+    private function addReplies($comments, &$response): void
+    {
+        foreach ($comments as $comment) {
+            $response[] = $comment;
+
+            if ($comment->replies) {
+                $this->addReplies($comment->replies, $response);
+            }
+        }
     }
 
     /**

@@ -70,7 +70,7 @@ class Comment extends \yii\db\ActiveRecord
      *
      * @return ActiveQuery
      */
-    public function getComments(): ActiveQuery
+    public function getReplies(): ActiveQuery
     {
         return $this->hasMany(__CLASS__, ['parent_comment_id' => 'id']);
     }

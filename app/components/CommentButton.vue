@@ -30,6 +30,7 @@ export default {
 
   emits: [
     'showEditComment',
+    'showReplyComment',
   ],
 
   methods: {

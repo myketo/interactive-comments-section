@@ -1,6 +1,11 @@
 <template>
   <div class="comments-section">
-    <comment v-for="comment in comments" :key="comment.id" :data="comment"></comment>
+    <comment
+      v-for="comment in comments"
+      :key="comment.id"
+      :data="comment"
+      @commentAdded="loadComments">
+    </comment>
   </div>
 </template>
 
@@ -21,8 +26,14 @@ export default {
     }
   },
 
-  async beforeMount() {
-    this.comments = await api.helpGet('comments')
+  methods: {
+    async loadComments() {
+      this.comments = await api.helpGet('comments')
+    },
+  },
+
+  beforeMount() {
+    this.loadComments()
   }
 }
 </script>

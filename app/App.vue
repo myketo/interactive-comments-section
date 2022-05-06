@@ -24,7 +24,9 @@ export default {
   },
 
   async beforeMount() {
-    await this.storeCurrentUser()
+    if (!localStorage.currentUser) {
+      await this.storeCurrentUser()
+    }
   },
 }
 </script>

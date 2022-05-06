@@ -13,14 +13,15 @@
           <span class="response-to" v-if="isResponse()">@{{ data.parent_comment_author }}</span>
           {{ data.content }}
         </p>
-        <textarea class="message-edit" @input="mixinTextareaAutoResize" ref="commentEdit" v-show="showEditCommentField">@{{ data.parent_comment_author }} {{ data.content }}</textarea>
+
+        <comment-textarea v-show="showEditCommentField" v-model="editedContent"></comment-textarea>
         <big-button action="edit" v-show="showEditCommentField" @editComment="editComment()"></big-button>
       </div>
 
       <div class="comment__bottom-section">
         <comment-score :score="data.score"></comment-score>
 
-        <comment-button action="reply" v-if="!isCurrentUser()"></comment-button>
+        <comment-button action="reply" v-if="!isCurrentUser()" @showReplyComment="toggleShowReplyField()"></comment-button>
         <div class="current-user-buttons" v-else>
           <comment-button action="delete"></comment-button>
           <comment-button action="edit" @showEditComment="toggleShowEditCommentField()"></comment-button>
@@ -28,15 +29,20 @@
       </div>
     </div>
   </div>
+
+  <div class="comment-container" :class="{ 'is-response': isResponse(), 'hidden': !showReplyField }">
+    <comment-textarea v-show="showReplyField" v-model="newReply"></comment-textarea>
+    <big-button action="reply" @replyComment="replyToComment()"></big-button>
+  </div>
 </template>
 
 <script>
 import CommentScore from './CommentScore';
 import CommentButton from './CommentButton';
 import BigButton from "./BigButton";
+import CommentTextarea from "./CommentTextarea";
 
 import api from "../api";
-import mixinTextareaAutoResize from '../mixins/textareaAutoResize';
 
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
@@ -46,10 +52,6 @@ const timeAgo = new TimeAgo('en-US')
 export default {
   name: "Comment",
 
-  mixins: [
-      mixinTextareaAutoResize,
-  ],
-
   props: {
     data: {
       type: Object,
@@ -57,9 +59,22 @@ export default {
     },
   },
 
+  emits: [
+    "commentAdded",
+  ],
+
   data() {
     return {
       showEditCommentField: false,
+      showReplyField: false,
+      editedContent: this.data.content,
+      newReply: '',
+    }
+  },
+
+  computed: {
+    currentUser() {
+      return JSON.parse(localStorage.currentUser)
     }
   },
 
@@ -67,6 +82,7 @@ export default {
     CommentScore,
     CommentButton,
     BigButton,
+    CommentTextarea,
   },
 
   methods: {
@@ -80,7 +96,7 @@ export default {
       return timeAgo.format(new Date(this.data.created_at))
     },
     isCurrentUser() {
-      const currentUser = JSON.parse(localStorage.currentUser)
+      const currentUser = this.currentUser
 
       return currentUser.id === this.data.user.id
     },
@@ -91,35 +107,36 @@ export default {
       this.showEditCommentField = !this.showEditCommentField
     },
     editComment() {
-      const newContent = this.removeFirstWord(this.$refs.commentEdit.value)
+      if (this.editedContent !== this.data.content) {
+        api.helpPatch(`comments/${this.data.id}`, { content: this.editedContent })
 
-      if (newContent !== this.data.content) {
-        api.helpPatch(`comments/${this.data.id}`, { content: newContent })
-
-        this.data.content = newContent
+        this.data.content = this.editedContent
       }
 
       this.toggleShowEditCommentField()
     },
-    removeFirstWord(string) {
-      if (!this.data.parent_comment_id) {
-        return string;
+    toggleShowReplyField() {
+      this.showReplyField = !this.showReplyField
+    },
+    replyToComment() {
+      if (this.newReply !== '') {
+        const data = {
+          content: this.newReply,
+          user_id: this.currentUser.id,
+          parent_comment_id: this.data.id,
+        }
+        api.helpPost('comments', data).then(() => {
+          this.$nextTick(() => {
+            this.$emit('commentAdded')
+          })
+        })
+
+        this.newReply = ''
       }
 
-      const indexOfSpace = string.indexOf(' ');
-      if (indexOfSpace === -1) {
-        return '';
-      }
-
-      return string.substring(indexOfSpace + 1);
+      this.toggleShowReplyField()
     }
   },
-
-  updated() {
-    if (this.showEditCommentField) {
-      this.$refs.commentEdit.dispatchEvent(new Event("input"))
-    }
-  }
 }
 </script>
 
@@ -132,6 +149,10 @@ export default {
     &.is-response {
       border-left: 2px solid $light-gray;
       padding-left: 1em;
+    }
+
+    &.hidden {
+      display: none;
     }
 
     .comment {
@@ -178,22 +199,6 @@ export default {
           .response-to {
             color: $moderate-blue;
             font-weight: $font-weight-medium;
-          }
-        }
-
-        .message-edit {
-          width: 100%;
-          height: fit-content;
-          overflow-y: hidden;
-          padding: 0.75em 1em;
-          border-color: $grayish-blue;
-          border-radius: 0.5em;
-          resize: none;
-          outline: none;
-          color: $dark-blue;
-
-          &:focus-visible {
-            border-color: $dark-blue;
           }
         }
       }
