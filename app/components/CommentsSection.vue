@@ -54,6 +54,8 @@ export default {
   methods: {
     async loadComments() {
       this.comments = await api.helpGet('comments')
+
+      this.setLastResponses()
     },
     getCurrentUserImage() {
       return `../images/avatars/image-${this.currentUser.username}.webp`;
@@ -77,6 +79,25 @@ export default {
       })
 
       this.newComment = ''
+    },
+    setLastResponses() {
+      let filteredComments = this.comments.filter((comment, index, comments) => {
+        // Check if comment is a response.
+        if (comment.parent_comment_id === null) return false
+
+        // Check if there are comments after.
+        if (comments[index + 1] === undefined) return true
+
+        // Choose only latest replies.
+        return comments[index + 1].parent_comment_id === null
+      })
+
+      this.comments.forEach((comment, index) => {
+        if (filteredComments.indexOf(comment) !== -1) {
+          // Setting is_last_response value for selected replies.
+          this.comments[index].is_last_response = true
+        }
+      })
     }
   },
 

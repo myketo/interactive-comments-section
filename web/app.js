@@ -19913,7 +19913,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 2:
                 _this.comments = _context.sent;
 
-              case 3:
+                _this.setLastResponses();
+
+              case 4:
               case "end":
                 return _context.stop();
             }
@@ -19944,6 +19946,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         });
       });
       this.newComment = '';
+    },
+    setLastResponses: function setLastResponses() {
+      var _this3 = this;
+
+      var filteredComments = this.comments.filter(function (comment, index, comments) {
+        // Check if comment is a response.
+        if (comment.parent_comment_id === null) return false; // Check if there are comments after.
+
+        if (comments[index + 1] === undefined) return true; // Choose only latest replies.
+
+        return comments[index + 1].parent_comment_id === null;
+      });
+      this.comments.forEach(function (comment, index) {
+        if (filteredComments.indexOf(comment) !== -1) {
+          // Setting is_last_response value for selected replies.
+          _this3.comments[index].is_last_response = true;
+        }
+      });
     }
   },
   beforeMount: function beforeMount() {
@@ -20092,7 +20112,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["comment-container", {
-      'is-response': $options.isResponse()
+      'is-response': $options.isResponse(),
+      'is-last-response': $props.data.is_last_response
     }])
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
     src: $options.getImage(),
@@ -20538,7 +20559,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".comment-container {\n  padding-bottom: 1em;\n}\n.comment-container.is-response {\n  border-left: 2px solid #eaecf1;\n  padding-left: 1em;\n}\n.comment-container.hidden {\n  display: none;\n}\n.comment-container.new-reply .comment .comment-section.comment-section__top {\n  align-items: flex-start;\n}\n.comment-container.new-reply .comment .comment-section .user-avatar {\n  width: 2.5em;\n  min-width: 2.5em;\n}\n.comment-container .comment {\n  background-color: white;\n  width: 100%;\n  padding: 1em;\n  border-radius: 0.33em;\n}\n.comment-container .comment .comment-section .user-avatar {\n  width: 2em;\n  min-width: 2em;\n  height: -webkit-fit-content;\n  height: -moz-fit-content;\n  height: fit-content;\n}\n.comment-container .comment .comment-section.comment-section__top {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n}\n.comment-container .comment .comment-section.comment-section__top .username {\n  font-weight: 500;\n}\n.comment-container .comment .comment-section.comment-section__top .is-you {\n  background-color: #5457b6;\n  color: white;\n  border-radius: 2px;\n  padding: 0 0.55em 0.05em 0.55em;\n  font-weight: 500;\n  margin-left: -0.4em;\n}\n.comment-container .comment .comment-section.comment-section__top .created_time_ago {\n  color: #67727e;\n}\n.comment-container .comment .comment-section.comment-section__middle {\n  margin: 1em 0;\n}\n.comment-container .comment .comment-section.comment-section__middle .message {\n  color: #67727e;\n  word-break: break-word;\n}\n.comment-container .comment .comment-section.comment-section__middle .message .response-to {\n  color: #5457b6;\n  font-weight: 500;\n}\n.comment-container .comment .comment-section.comment-section__bottom {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.comment-container .comment .comment-section.comment-section__bottom .current-user-buttons {\n  display: flex;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".comment-container {\n  padding-bottom: 1em;\n}\n.comment-container.is-response {\n  border-left: 2px solid #eaecf1;\n  padding-left: 1em;\n}\n.comment-container.is-response.is-last-response {\n  padding-bottom: 0;\n  margin-bottom: 1em;\n}\n.comment-container.hidden {\n  display: none;\n}\n.comment-container.new-reply .comment .comment-section.comment-section__top {\n  align-items: flex-start;\n}\n.comment-container.new-reply .comment .comment-section .user-avatar {\n  width: 2.5em;\n  min-width: 2.5em;\n}\n.comment-container .comment {\n  background-color: white;\n  width: 100%;\n  padding: 1em;\n  border-radius: 0.33em;\n}\n.comment-container .comment .comment-section .user-avatar {\n  width: 2em;\n  min-width: 2em;\n  height: -webkit-fit-content;\n  height: -moz-fit-content;\n  height: fit-content;\n}\n.comment-container .comment .comment-section.comment-section__top {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n}\n.comment-container .comment .comment-section.comment-section__top .username {\n  font-weight: 500;\n}\n.comment-container .comment .comment-section.comment-section__top .is-you {\n  background-color: #5457b6;\n  color: white;\n  border-radius: 2px;\n  padding: 0 0.55em 0.05em 0.55em;\n  font-weight: 500;\n  margin-left: -0.4em;\n}\n.comment-container .comment .comment-section.comment-section__top .created_time_ago {\n  color: #67727e;\n}\n.comment-container .comment .comment-section.comment-section__middle {\n  margin: 1em 0;\n}\n.comment-container .comment .comment-section.comment-section__middle .message {\n  color: #67727e;\n  word-break: break-word;\n}\n.comment-container .comment .comment-section.comment-section__middle .message .response-to {\n  color: #5457b6;\n  font-weight: 500;\n}\n.comment-container .comment .comment-section.comment-section__bottom {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.comment-container .comment .comment-section.comment-section__bottom .current-user-buttons {\n  display: flex;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

@@ -1,5 +1,8 @@
 <template>
-  <div class="comment-container" :class="{'is-response': isResponse()}">
+  <div
+    class="comment-container"
+    :class="{'is-response': isResponse(), 'is-last-response': data.is_last_response}"
+  >
     <div class="comment">
       <div class="comment-section comment-section__top">
         <img :src="getImage()" :alt="getImageAlt()" class="user-avatar" />
@@ -192,6 +195,11 @@ export default {
     &.is-response {
       border-left: 2px solid $light-gray;
       padding-left: 1em;
+
+      &.is-last-response {
+        padding-bottom: 0;
+        margin-bottom: 1em;
+      }
     }
 
     &.hidden {
