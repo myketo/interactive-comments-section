@@ -19404,6 +19404,38 @@ var axiosClient = axios__WEBPACK_IMPORTED_MODULE_0___default().create({
 
 /***/ }),
 
+/***/ "./app/mixins/detectMobile.js":
+/*!************************************!*\
+  !*** ./app/mixins/detectMobile.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  data: function data() {
+    return {
+      isMobile: false
+    };
+  },
+  methods: {
+    setIsMobile: function setIsMobile() {
+      this.isMobile = window.innerWidth < 768;
+    }
+  },
+  mounted: function mounted() {
+    this.setIsMobile();
+    window.addEventListener('resize', this.setIsMobile, {
+      passive: true
+    });
+  }
+});
+
+/***/ }),
+
 /***/ "./app/mixins/textareaAutoResize.js":
 /*!******************************************!*\
   !*** ./app/mixins/textareaAutoResize.js ***!
@@ -19552,9 +19584,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _BigButton__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./BigButton */ "./app/components/BigButton.vue");
 /* harmony import */ var _CommentTextarea__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./CommentTextarea */ "./app/components/CommentTextarea.vue");
 /* harmony import */ var _DeleteCommentModal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./DeleteCommentModal */ "./app/components/DeleteCommentModal.vue");
-/* harmony import */ var _api__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../api */ "./app/api.js");
-/* harmony import */ var javascript_time_ago__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! javascript-time-ago */ "./node_modules/javascript-time-ago/modules/TimeAgo.js");
-/* harmony import */ var javascript_time_ago_locale_en__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! javascript-time-ago/locale/en */ "./node_modules/javascript-time-ago/locale/en.json");
+/* harmony import */ var _mixins_detectMobile__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../mixins/detectMobile */ "./app/mixins/detectMobile.js");
+/* harmony import */ var _api__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../api */ "./app/api.js");
+/* harmony import */ var javascript_time_ago__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! javascript-time-ago */ "./node_modules/javascript-time-ago/modules/TimeAgo.js");
+/* harmony import */ var javascript_time_ago_locale_en__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! javascript-time-ago/locale/en */ "./node_modules/javascript-time-ago/locale/en.json");
 
 
 
@@ -19563,8 +19596,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-javascript_time_ago__WEBPACK_IMPORTED_MODULE_6__["default"].addDefaultLocale(javascript_time_ago_locale_en__WEBPACK_IMPORTED_MODULE_7__);
-var timeAgo = new javascript_time_ago__WEBPACK_IMPORTED_MODULE_6__["default"]('en-US');
+
+javascript_time_ago__WEBPACK_IMPORTED_MODULE_7__["default"].addDefaultLocale(javascript_time_ago_locale_en__WEBPACK_IMPORTED_MODULE_8__);
+var timeAgo = new javascript_time_ago__WEBPACK_IMPORTED_MODULE_7__["default"]('en-US');
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "Comment",
   props: {
@@ -19574,6 +19608,7 @@ var timeAgo = new javascript_time_ago__WEBPACK_IMPORTED_MODULE_6__["default"]('e
     }
   },
   emits: ["commentsUpdated"],
+  mixins: [_mixins_detectMobile__WEBPACK_IMPORTED_MODULE_5__["default"]],
   data: function data() {
     return {
       showEditCommentField: false,
@@ -19628,10 +19663,11 @@ var timeAgo = new javascript_time_ago__WEBPACK_IMPORTED_MODULE_6__["default"]('e
     },
     toggleShowEditCommentField: function toggleShowEditCommentField() {
       this.showEditCommentField = !this.showEditCommentField;
+      this.editedContent = this.data.content;
     },
     editComment: function editComment() {
       if (this.editedContent !== this.data.content) {
-        _api__WEBPACK_IMPORTED_MODULE_5__["default"].helpPatch("comments/".concat(this.data.id), {
+        _api__WEBPACK_IMPORTED_MODULE_6__["default"].helpPatch("comments/".concat(this.data.id), {
           content: this.editedContent
         });
         this.data.content = this.editedContent;
@@ -19641,6 +19677,7 @@ var timeAgo = new javascript_time_ago__WEBPACK_IMPORTED_MODULE_6__["default"]('e
     },
     toggleShowReplyField: function toggleShowReplyField() {
       this.showReplyField = !this.showReplyField;
+      this.newReply = '';
     },
     replyToComment: function replyToComment() {
       var _this = this;
@@ -19651,7 +19688,7 @@ var timeAgo = new javascript_time_ago__WEBPACK_IMPORTED_MODULE_6__["default"]('e
           user_id: this.currentUser.id,
           parent_comment_id: this.data.id
         };
-        _api__WEBPACK_IMPORTED_MODULE_5__["default"].helpPost('comments', data).then(function () {
+        _api__WEBPACK_IMPORTED_MODULE_6__["default"].helpPost('comments', data).then(function () {
           _this.$nextTick(function () {
             _this.$emit('commentsUpdated');
           });
@@ -19673,7 +19710,7 @@ var timeAgo = new javascript_time_ago__WEBPACK_IMPORTED_MODULE_6__["default"]('e
     deleteComment: function deleteComment() {
       var _this2 = this;
 
-      _api__WEBPACK_IMPORTED_MODULE_5__["default"].helpDelete("comments/".concat(this.data.id)).then(function () {
+      _api__WEBPACK_IMPORTED_MODULE_6__["default"].helpDelete("comments/".concat(this.data.id)).then(function () {
         _this2.$nextTick(function () {
           _this2.$emit('commentsUpdated');
         });
@@ -19870,11 +19907,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Comment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Comment */ "./app/components/Comment.vue");
 /* harmony import */ var _CommentTextarea__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./CommentTextarea */ "./app/components/CommentTextarea.vue");
 /* harmony import */ var _BigButton__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./BigButton */ "./app/components/BigButton.vue");
+/* harmony import */ var _mixins_detectMobile__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../mixins/detectMobile */ "./app/mixins/detectMobile.js");
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 
 
 
@@ -19898,6 +19937,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return JSON.parse(localStorage.currentUser);
     }
   },
+  mixins: [_mixins_detectMobile__WEBPACK_IMPORTED_MODULE_5__["default"]],
   methods: {
     loadComments: function loadComments() {
       var _this = this;
@@ -20038,7 +20078,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onClick: _cache[0] || (_cache[0] = function ($event) {
       return _ctx.$emit("".concat($props.action, "Comment"));
     })
-  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.action), 3
+  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.action === 'edit' ? 'update' : $props.action), 3
   /* TEXT, CLASS */
   )]);
 }
@@ -20062,51 +20102,70 @@ var _hoisted_1 = {
   "class": "comment"
 };
 var _hoisted_2 = {
+  "class": "comment-content"
+};
+var _hoisted_3 = {
   "class": "comment-section comment-section__top"
 };
-var _hoisted_3 = ["src", "alt"];
-var _hoisted_4 = {
+var _hoisted_4 = ["src", "alt"];
+var _hoisted_5 = {
   "class": "username"
 };
-var _hoisted_5 = {
+var _hoisted_6 = {
   key: 0,
   "class": "is-you"
 };
-var _hoisted_6 = {
+var _hoisted_7 = {
   "class": "created_time_ago"
 };
-var _hoisted_7 = {
-  "class": "comment-section comment-section__middle"
-};
 var _hoisted_8 = {
-  "class": "message"
+  key: 1,
+  "class": "comment-buttons"
 };
 var _hoisted_9 = {
-  key: 0,
-  "class": "response-to"
-};
-var _hoisted_10 = {
-  "class": "comment-section comment-section__bottom"
-};
-var _hoisted_11 = {
   key: 1,
   "class": "current-user-buttons"
 };
+var _hoisted_10 = {
+  "class": "comment-section comment-section__middle"
+};
+var _hoisted_11 = {
+  "class": "message"
+};
 var _hoisted_12 = {
+  key: 0,
+  "class": "response-to"
+};
+var _hoisted_13 = ["innerHTML"];
+var _hoisted_14 = {
+  "class": "comment-section comment-section__bottom"
+};
+var _hoisted_15 = {
+  key: 1,
+  "class": "comment-buttons"
+};
+var _hoisted_16 = {
+  key: 1,
+  "class": "current-user-buttons"
+};
+var _hoisted_17 = {
   "class": "comment"
 };
-var _hoisted_13 = {
+var _hoisted_18 = {
+  "class": "comment-content"
+};
+var _hoisted_19 = {
   "class": "comment-section comment-section__top"
 };
-var _hoisted_14 = ["src", "alt"];
+var _hoisted_20 = ["src", "alt"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  var _component_comment_textarea = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("comment-textarea");
-
-  var _component_big_button = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("big-button");
-
   var _component_comment_score = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("comment-score");
 
   var _component_comment_button = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("comment-button");
+
+  var _component_comment_textarea = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("comment-textarea");
+
+  var _component_big_button = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("big-button");
 
   var _component_delete_comment_modal = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("delete-comment-modal");
 
@@ -20115,88 +20174,121 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       'is-response': $options.isResponse(),
       'is-last-response': $props.data.is_last_response
     }])
-  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [!_ctx.isMobile ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_comment_score, {
+    key: 0,
+    score: $props.data.score
+  }, null, 8
+  /* PROPS */
+  , ["score"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
     src: $options.getImage(),
     alt: $options.getImageAlt(),
     "class": "user-avatar"
   }, null, 8
   /* PROPS */
-  , _hoisted_3), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.data.user.username), 1
+  , _hoisted_4), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.data.user.username), 1
   /* TEXT */
-  ), $options.isCurrentUser() ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_5, "you")) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.getCreatedTimeAgo()), 1
+  ), $options.isCurrentUser() ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_6, "you")) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.getCreatedTimeAgo()), 1
   /* TEXT */
-  )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_8, [$options.isResponse() ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_9, "@" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.data.parent_comment_author), 1
+  ), !_ctx.isMobile ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_8, [!$options.isCurrentUser() ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_comment_button, {
+    key: 0,
+    action: "reply",
+    onShowReplyComment: _cache[0] || (_cache[0] = function ($event) {
+      return $options.toggleShowReplyField();
+    })
+  })) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_comment_button, {
+    action: "delete",
+    onShowDeleteComment: _cache[1] || (_cache[1] = function ($event) {
+      return $options.toggleShowDeleteCommentModal();
+    })
+  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_comment_button, {
+    action: "edit",
+    onShowEditComment: _cache[2] || (_cache[2] = function ($event) {
+      return $options.toggleShowEditCommentField();
+    })
+  })]))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_11, [$options.isResponse() ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_12, "@" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.data.parent_comment_author) + " ", 1
   /* TEXT */
-  )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.data.content), 1
-  /* TEXT */
-  )], 512
+  )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+    innerHTML: $props.data.content.replace('/', '/<wbr/>')
+  }, null, 8
+  /* PROPS */
+  , _hoisted_13)], 512
   /* NEED_PATCH */
   ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vShow, !$data.showEditCommentField]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_comment_textarea, {
     modelValue: $data.editedContent,
-    "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
+    "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
       return $data.editedContent = $event;
     })
   }, null, 8
   /* PROPS */
   , ["modelValue"]), [[vue__WEBPACK_IMPORTED_MODULE_0__.vShow, $data.showEditCommentField]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_big_button, {
     action: "edit",
-    onEditComment: _cache[1] || (_cache[1] = function ($event) {
+    onEditComment: _cache[4] || (_cache[4] = function ($event) {
       return $options.editComment();
     })
   }, null, 512
   /* NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vShow, $data.showEditCommentField]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_comment_score, {
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vShow, $data.showEditCommentField]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [_ctx.isMobile ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_comment_score, {
+    key: 0,
     score: $props.data.score
   }, null, 8
   /* PROPS */
-  , ["score"]), !$options.isCurrentUser() ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_comment_button, {
+  , ["score"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.isMobile ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_15, [!$options.isCurrentUser() ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_comment_button, {
     key: 0,
     action: "reply",
-    onShowReplyComment: _cache[2] || (_cache[2] = function ($event) {
+    onShowReplyComment: _cache[5] || (_cache[5] = function ($event) {
       return $options.toggleShowReplyField();
     })
-  })) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_comment_button, {
+  })) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_16, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_comment_button, {
     action: "delete",
-    onShowDeleteComment: _cache[3] || (_cache[3] = function ($event) {
+    onShowDeleteComment: _cache[6] || (_cache[6] = function ($event) {
       return $options.toggleShowDeleteCommentModal();
     })
   }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_comment_button, {
     action: "edit",
-    onShowEditComment: _cache[4] || (_cache[4] = function ($event) {
+    onShowEditComment: _cache[7] || (_cache[7] = function ($event) {
       return $options.toggleShowEditCommentField();
     })
-  })]))])])], 2
+  })]))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])])], 2
   /* CLASS */
   ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["comment-container new-reply", {
       'is-response': $options.isResponse(),
       'hidden': !$data.showReplyField
     }])
-  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_17, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_18, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_19, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
     src: $options.getImage(true),
     alt: $options.getImageAlt(true),
     "class": "user-avatar"
   }, null, 8
   /* PROPS */
-  , _hoisted_14), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_comment_textarea, {
+  , _hoisted_20), _ctx.isMobile ? (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)(((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_comment_textarea, {
+    key: 0,
     modelValue: $data.newReply,
-    "onUpdate:modelValue": _cache[5] || (_cache[5] = function ($event) {
+    "onUpdate:modelValue": _cache[8] || (_cache[8] = function ($event) {
       return $data.newReply = $event;
     })
   }, null, 8
   /* PROPS */
-  , ["modelValue"]), [[vue__WEBPACK_IMPORTED_MODULE_0__.vShow, $data.showReplyField]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_big_button, {
+  , ["modelValue"])), [[vue__WEBPACK_IMPORTED_MODULE_0__.vShow, $data.showReplyField]]) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), !_ctx.isMobile ? (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)(((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_comment_textarea, {
+    key: 0,
+    modelValue: $data.newReply,
+    "onUpdate:modelValue": _cache[9] || (_cache[9] = function ($event) {
+      return $data.newReply = $event;
+    })
+  }, null, 8
+  /* PROPS */
+  , ["modelValue"])), [[vue__WEBPACK_IMPORTED_MODULE_0__.vShow, $data.showReplyField]]) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_big_button, {
     action: "reply",
-    onReplyComment: _cache[6] || (_cache[6] = function ($event) {
+    onReplyComment: _cache[10] || (_cache[10] = function ($event) {
       return $options.replyToComment();
     })
-  })])], 2
+  })])])], 2
   /* CLASS */
   ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_delete_comment_modal, {
-    onCancelDelete: _cache[7] || (_cache[7] = function ($event) {
+    onCancelDelete: _cache[11] || (_cache[11] = function ($event) {
       return $options.toggleShowDeleteCommentModal();
     }),
-    onConfirmDelete: _cache[8] || (_cache[8] = function ($event) {
+    onConfirmDelete: _cache[12] || (_cache[12] = function ($event) {
       return $options.deleteComment();
     })
   }, null, 512
@@ -20384,15 +20476,16 @@ var _hoisted_3 = {
   "class": "comment"
 };
 var _hoisted_4 = {
-  "class": "comment-section comment-section__top"
+  "class": "comment-content"
 };
 var _hoisted_5 = {
-  "class": "comment-section comment-section__bottom",
-  style: {
-    "margin-top": "1em"
-  }
+  "class": "comment-section comment-section__top"
 };
 var _hoisted_6 = ["src", "alt"];
+var _hoisted_7 = {
+  "class": "comment-section comment-section__bottom"
+};
+var _hoisted_8 = ["src", "alt"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_comment = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("comment");
 
@@ -20410,7 +20503,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     , ["data", "onCommentsUpdated"]);
   }), 128
   /* KEYED_FRAGMENT */
-  )), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_comment_textarea, {
+  )), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [!_ctx.isMobile ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("img", {
+    key: 0,
+    src: $options.getCurrentUserImage(),
+    alt: $options.getCurrentUserImageAlt(),
+    "class": "user-avatar"
+  }, null, 8
+  /* PROPS */
+  , _hoisted_6)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_comment_textarea, {
     modelValue: $data.newComment,
     "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
       return $data.newComment = $event;
@@ -20418,18 +20518,19 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     placeholder: "Add a comment..."
   }, null, 8
   /* PROPS */
-  , ["modelValue"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+  , ["modelValue"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [_ctx.isMobile ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("img", {
+    key: 0,
     src: $options.getCurrentUserImage(),
     alt: $options.getCurrentUserImageAlt(),
     "class": "user-avatar"
   }, null, 8
   /* PROPS */
-  , _hoisted_6), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_big_button, {
+  , _hoisted_8)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_big_button, {
     action: "send",
     onSendComment: _cache[1] || (_cache[1] = function ($event) {
       return $options.createComment();
     })
-  })])])])]);
+  })])])])])]);
 }
 
 /***/ }),
@@ -20535,7 +20636,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".big-button-container[data-v-7529e1b5] {\n  width: 100%;\n  text-align: end;\n  margin-top: 0.5em;\n}\n.big-button-container .big-button[data-v-7529e1b5] {\n  border: none;\n  border-radius: 0.5em;\n  background-color: #5457b6;\n  color: white;\n  padding: 0.65em 1.25em;\n  text-transform: uppercase;\n  font-weight: 500;\n}\n.big-button-container .big-button.big-button__send[data-v-7529e1b5] {\n  padding: 0.85em 2em;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".big-button-container[data-v-7529e1b5] {\n  width: 100%;\n  text-align: end;\n  margin-top: 0.5em;\n}\n@media (min-width: 768px) {\n.big-button-container[data-v-7529e1b5] {\n    width: auto;\n    margin-top: 0;\n}\n}\n.big-button-container .big-button[data-v-7529e1b5] {\n  border: none;\n  border-radius: 0.5em;\n  background-color: #5457b6;\n  color: white;\n  padding: 0.65em 1.25em;\n  text-transform: uppercase;\n  font-weight: 500;\n  transition: filter 0.2s ease-in-out;\n}\n.big-button-container .big-button.big-button__send[data-v-7529e1b5] {\n  padding: 0.85em 2em;\n}\n.big-button-container .big-button[data-v-7529e1b5]:hover {\n  filter: opacity(0.33) drop-shadow(0 0 0 #c3c4ef);\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -20559,7 +20660,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".comment-container {\n  padding-bottom: 1em;\n}\n.comment-container.is-response {\n  border-left: 2px solid #eaecf1;\n  padding-left: 1em;\n}\n.comment-container.is-response.is-last-response {\n  padding-bottom: 0;\n  margin-bottom: 1em;\n}\n.comment-container.hidden {\n  display: none;\n}\n.comment-container.new-reply .comment .comment-section.comment-section__top {\n  align-items: flex-start;\n}\n.comment-container.new-reply .comment .comment-section .user-avatar {\n  width: 2.5em;\n  min-width: 2.5em;\n}\n.comment-container .comment {\n  background-color: white;\n  width: 100%;\n  padding: 1em;\n  border-radius: 0.33em;\n}\n.comment-container .comment .comment-section .user-avatar {\n  width: 2em;\n  min-width: 2em;\n  height: -webkit-fit-content;\n  height: -moz-fit-content;\n  height: fit-content;\n}\n.comment-container .comment .comment-section.comment-section__top {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n}\n.comment-container .comment .comment-section.comment-section__top .username {\n  font-weight: 500;\n}\n.comment-container .comment .comment-section.comment-section__top .is-you {\n  background-color: #5457b6;\n  color: white;\n  border-radius: 2px;\n  padding: 0 0.55em 0.05em 0.55em;\n  font-weight: 500;\n  margin-left: -0.4em;\n}\n.comment-container .comment .comment-section.comment-section__top .created_time_ago {\n  color: #67727e;\n}\n.comment-container .comment .comment-section.comment-section__middle {\n  margin: 1em 0;\n}\n.comment-container .comment .comment-section.comment-section__middle .message {\n  color: #67727e;\n  word-break: break-word;\n}\n.comment-container .comment .comment-section.comment-section__middle .message .response-to {\n  color: #5457b6;\n  font-weight: 500;\n}\n.comment-container .comment .comment-section.comment-section__bottom {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.comment-container .comment .comment-section.comment-section__bottom .current-user-buttons {\n  display: flex;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".comment-container {\n  padding-bottom: 1em;\n}\n@media (min-width: 768px) {\n.comment-container {\n    padding-bottom: 1.5em;\n}\n}\n.comment-container.is-response {\n  border-left: 2px solid #eaecf1;\n  padding-left: 1em;\n}\n@media (min-width: 768px) {\n.comment-container.is-response {\n    padding-left: 2.5em;\n    margin-left: 2.5em;\n}\n}\n.comment-container.is-response.is-last-response {\n  padding-bottom: 0;\n  margin-bottom: 1em;\n}\n@media (min-width: 768px) {\n.comment-container.is-response.is-last-response {\n    margin-bottom: 1.5em;\n}\n}\n.comment-container.hidden {\n  display: none;\n}\n@media (min-width: 768px) {\n.comment-container.new-reply {\n    margin-top: -1em;\n}\n}\n@media (min-width: 768px) {\n.comment-container.new-reply .comment .comment-content {\n    display: flex;\n    gap: 1em;\n}\n}\n.comment-container.new-reply .comment .comment-content .comment-section.comment-section__top {\n  display: flex;\n  gap: 1em;\n  align-items: flex-start;\n}\n.comment-container.new-reply .comment .comment-content .comment-section .user-avatar {\n  width: 2.5em;\n  min-width: 2.5em;\n}\n.comment-container .comment {\n  background-color: white;\n  width: 100%;\n  padding: 1em;\n  border-radius: 0.33em;\n}\n@media (min-width: 768px) {\n.comment-container .comment {\n    display: flex;\n    padding: 1.5em;\n    border-radius: 0.5em;\n}\n}\n.comment-container .comment .comment-content {\n  width: 100%;\n}\n.comment-container .comment .comment-content .comment-section .user-avatar {\n  width: 2em;\n  min-width: 2em;\n  height: -webkit-fit-content;\n  height: -moz-fit-content;\n  height: fit-content;\n}\n.comment-container .comment .comment-content .comment-section.comment-section__top {\n  display: flex;\n  align-items: center;\n  gap: 1em;\n}\n.comment-container .comment .comment-content .comment-section.comment-section__top .username {\n  font-weight: 500;\n}\n.comment-container .comment .comment-content .comment-section.comment-section__top .is-you {\n  background-color: #5457b6;\n  color: white;\n  border-radius: 2px;\n  padding: 0 0.55em 0.05em 0.55em;\n  font-weight: 500;\n  margin-left: -0.4em;\n}\n.comment-container .comment .comment-content .comment-section.comment-section__top .created_time_ago {\n  color: #67727e;\n}\n.comment-container .comment .comment-content .comment-section.comment-section__top .comment-buttons {\n  margin-left: auto;\n}\n.comment-container .comment .comment-content .comment-section.comment-section__top .comment-buttons .current-user-buttons {\n  display: flex;\n  gap: 1em;\n}\n.comment-container .comment .comment-content .comment-section.comment-section__middle {\n  margin: 1em 0;\n}\n@media (min-width: 768px) {\n.comment-container .comment .comment-content .comment-section.comment-section__middle {\n    margin: 1em 0 0 0;\n}\n}\n.comment-container .comment .comment-content .comment-section.comment-section__middle .message {\n  color: #67727e;\n  word-break: break-word;\n  line-height: 1.75em;\n}\n.comment-container .comment .comment-content .comment-section.comment-section__middle .message .response-to {\n  color: #5457b6;\n  font-weight: 500;\n}\n.comment-container .comment .comment-content .comment-section.comment-section__bottom {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n.comment-container .comment .comment-content .comment-section.comment-section__bottom .comment-buttons .current-user-buttons {\n  display: flex;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -20607,7 +20708,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".comment-score[data-v-e6755640] {\n  background-color: #f5f6fa;\n  width: -webkit-fit-content;\n  width: -moz-fit-content;\n  width: fit-content;\n  padding: 0.5em;\n  border-radius: 0.75em;\n  display: flex;\n  align-items: center;\n  gap: 0.75em;\n}\n.comment-score .score-btn[data-v-e6755640] {\n  border: none;\n  background-color: inherit;\n}\n.comment-score .score-btn .score-btn-icon[data-v-e6755640] {\n  fill: #C5C6EF;\n  transition: fill 0.2s ease-in-out;\n}\n.comment-score .score-btn .score-btn-icon.icon-increment[data-v-e6755640] {\n  width: 12px;\n  height: 12px;\n}\n.comment-score .score-btn .score-btn-icon.icon-decrement[data-v-e6755640] {\n  width: 12px;\n  height: 4px;\n}\n.comment-score .score-btn:hover .score-btn-icon[data-v-e6755640], .comment-score .score-btn.active .score-btn-icon[data-v-e6755640] {\n  fill: #5457b6;\n}\n.comment-score .current-score[data-v-e6755640] {\n  color: #5457b6;\n  font-weight: 500;\n  width: 1em;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".comment-score[data-v-e6755640] {\n  background-color: #f5f6fa;\n  width: -webkit-fit-content;\n  width: -moz-fit-content;\n  width: fit-content;\n  padding: 0.5em;\n  border-radius: 0.75em;\n  display: flex;\n  align-items: center;\n  gap: 0.75em;\n  text-align: center;\n}\n@media (min-width: 768px) {\n.comment-score[data-v-e6755640] {\n    flex-direction: column;\n    justify-content: center;\n    height: -webkit-fit-content;\n    height: -moz-fit-content;\n    height: fit-content;\n    gap: 0.5em;\n    margin-right: 1.5em;\n}\n}\n.comment-score .score-btn[data-v-e6755640] {\n  border: none;\n  background-color: inherit;\n}\n.comment-score .score-btn .score-btn-icon[data-v-e6755640] {\n  fill: #C5C6EF;\n  transition: fill 0.2s ease-in-out;\n}\n.comment-score .score-btn .score-btn-icon.icon-increment[data-v-e6755640] {\n  width: 12px;\n  height: 12px;\n}\n.comment-score .score-btn .score-btn-icon.icon-decrement[data-v-e6755640] {\n  width: 12px;\n  height: 4px;\n}\n.comment-score .score-btn:hover .score-btn-icon[data-v-e6755640], .comment-score .score-btn.active .score-btn-icon[data-v-e6755640] {\n  fill: #5457b6;\n}\n.comment-score .current-score[data-v-e6755640] {\n  color: #5457b6;\n  font-weight: 500;\n  width: 1em;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -20631,7 +20732,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".comment-textarea[data-v-308f0748] {\n  width: 100%;\n  height: -webkit-fit-content;\n  height: -moz-fit-content;\n  height: fit-content;\n  overflow-y: hidden;\n  padding: 0.75em 1em;\n  border-color: #67727e;\n  border-radius: 0.5em;\n  resize: none;\n  outline: none;\n  color: #324152;\n}\n.comment-textarea[data-v-308f0748]:focus-visible {\n  border-color: #324152;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".comment-textarea[data-v-308f0748] {\n  width: 100%;\n  height: -webkit-fit-content;\n  height: -moz-fit-content;\n  height: fit-content;\n  overflow-y: hidden;\n  padding: 0.75em 1em;\n  border-color: #67727e;\n  border-radius: 0.5em;\n  resize: none;\n  outline: none;\n  color: #324152;\n}\n@media (min-width: 768px) {\n.comment-textarea[data-v-308f0748] {\n    height: 6.5em;\n    min-height: 6.5em;\n}\n}\n.comment-textarea[data-v-308f0748]:focus-visible {\n  border-color: #324152;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -20655,7 +20756,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".comments-section[data-v-4f8e13f4] {\n  background-color: #f5f6fa;\n  padding: 2em 1em;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".comments-section[data-v-4f8e13f4] {\n  background-color: #f5f6fa;\n  padding: 2em 1em;\n}\n@media (min-width: 768px) {\n.comments-section[data-v-4f8e13f4] {\n    padding: 3.5em 21.75em;\n}\n}\n.comments-section .new-comment[data-v-4f8e13f4] {\n  display: flex;\n  width: 100%;\n}\n.comments-section .new-comment .comment[data-v-4f8e13f4] {\n  justify-content: space-between;\n}\n@media (min-width: 768px) {\n.comments-section .new-comment .comment .comment-content[data-v-4f8e13f4] {\n    display: flex;\n    align-items: flex-start;\n}\n}\n.comments-section .new-comment .comment .comment-content .comment-section .user-avatar[data-v-4f8e13f4] {\n  width: 2.5em;\n  min-width: 2.5em;\n  height: -webkit-fit-content;\n  height: -moz-fit-content;\n  height: fit-content;\n}\n.comments-section .new-comment .comment .comment-content .comment-section.comment-section__top[data-v-4f8e13f4] {\n  width: 100%;\n  display: flex;\n  gap: 1em;\n  margin-right: 1em;\n}\n@media (min-width: 768px) {\n.comments-section .new-comment .comment .comment-content .comment-section.comment-section__top[data-v-4f8e13f4] {\n    align-items: flex-start;\n}\n}\n.comments-section .new-comment .comment .comment-content .comment-section.comment-section__top .comment-textarea[data-v-4f8e13f4] {\n  width: 100%;\n}\n.comments-section .new-comment .comment .comment-content .comment-section.comment-section__bottom[data-v-4f8e13f4] {\n  margin-top: 1em;\n}\n@media (min-width: 768px) {\n.comments-section .new-comment .comment .comment-content .comment-section.comment-section__bottom[data-v-4f8e13f4] {\n    margin-top: 0;\n}\n}\n@media (min-width: 768px) {\n.comments-section .new-comment .comment .comment-content .comment-section.comment-section__bottom .big-button-container[data-v-4f8e13f4] {\n    margin-top: 0;\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -20679,7 +20780,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".modal-backdrop[data-v-355b68f4] {\n  background-color: rgba(0, 0, 0, 0.5);\n  position: fixed;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  overflow: hidden;\n}\n.modal-backdrop .delete-comment-modal[data-v-355b68f4] {\n  background: white;\n  padding: 1.65em 1.75em;\n  margin: 1em;\n  border-radius: 0.5em;\n}\n.modal-backdrop .delete-comment-modal .modal-title[data-v-355b68f4] {\n  color: #324152;\n  font-size: 21px;\n  margin-bottom: 0.5em;\n}\n.modal-backdrop .delete-comment-modal .modal-text[data-v-355b68f4] {\n  color: #67727e;\n  margin: 1.15em 0;\n}\n.modal-backdrop .delete-comment-modal .modal-buttons[data-v-355b68f4] {\n  display: flex;\n  justify-content: space-between;\n}\n.modal-backdrop .delete-comment-modal .modal-buttons button[data-v-355b68f4] {\n  border: none;\n  border-radius: 0.5em;\n  color: white;\n  font-weight: 500;\n  padding: 0.75em 1.25em;\n}\n.modal-backdrop .delete-comment-modal .modal-buttons button.cancel-button[data-v-355b68f4] {\n  background-color: #67727e;\n}\n.modal-backdrop .delete-comment-modal .modal-buttons button.confirm-button[data-v-355b68f4] {\n  background-color: #ed6468;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".modal-backdrop[data-v-355b68f4] {\n  background-color: rgba(0, 0, 0, 0.5);\n  position: fixed;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  overflow: hidden;\n}\n.modal-backdrop .delete-comment-modal[data-v-355b68f4] {\n  background: white;\n  padding: 1.65em 1.75em;\n  margin: 1em;\n  border-radius: 0.5em;\n}\n@media (min-width: 768px) {\n.modal-backdrop .delete-comment-modal[data-v-355b68f4] {\n    width: 28%;\n    padding: 1.8em 2.1em;\n}\n}\n.modal-backdrop .delete-comment-modal .modal-title[data-v-355b68f4] {\n  color: #324152;\n  font-size: 21px;\n  margin-bottom: 0.5em;\n}\n.modal-backdrop .delete-comment-modal .modal-text[data-v-355b68f4] {\n  color: #67727e;\n  margin: 1.15em 0;\n}\n.modal-backdrop .delete-comment-modal .modal-buttons[data-v-355b68f4] {\n  display: flex;\n  justify-content: space-between;\n}\n@media (min-width: 768px) {\n.modal-backdrop .delete-comment-modal .modal-buttons[data-v-355b68f4] {\n    gap: 1em;\n}\n}\n.modal-backdrop .delete-comment-modal .modal-buttons button[data-v-355b68f4] {\n  border: none;\n  border-radius: 0.5em;\n  color: white;\n  font-weight: 500;\n  padding: 0.75em 1.25em;\n}\n@media (min-width: 768px) {\n.modal-backdrop .delete-comment-modal .modal-buttons button[data-v-355b68f4] {\n    padding: 0.75em;\n    width: 100%;\n}\n}\n.modal-backdrop .delete-comment-modal .modal-buttons button.cancel-button[data-v-355b68f4] {\n  background-color: #67727e;\n}\n.modal-backdrop .delete-comment-modal .modal-buttons button.confirm-button[data-v-355b68f4] {\n  background-color: #ed6468;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

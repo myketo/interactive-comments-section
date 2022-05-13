@@ -109,6 +109,15 @@ export default {
   display: flex;
   align-items: center;
   gap: 0.75em;
+  text-align: center;
+
+  @media (min-width: $min-desktop) {
+    flex-direction: column;
+    justify-content: center;
+    height: fit-content;
+    gap: 0.5em;
+    margin-right: 1.5em;
+  }
 
   .score-btn {
     border: none;

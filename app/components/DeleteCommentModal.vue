@@ -37,6 +37,11 @@
       margin: 1em;
       border-radius: 0.5em;
 
+      @media (min-width: $min-desktop) {
+        width: 28%;
+        padding: 1.8em 2.1em;
+      }
+
       .modal-title {
         color: $dark-blue;
         font-size: 21px;
@@ -52,12 +57,21 @@
         display: flex;
         justify-content: space-between;
 
+        @media (min-width: $min-desktop) {
+          gap: 1em;
+        }
+
         button {
           border: none;
           border-radius: 0.5em;
           color: $white;
           font-weight: $font-weight-medium;
           padding: 0.75em 1.25em;
+
+          @media (min-width: $min-desktop) {
+            padding: 0.75em;
+            width: 100%;
+          }
 
           &.cancel-button {
             background-color: $grayish-blue;

@@ -1,7 +1,7 @@
 <template>
   <div class="big-button-container">
     <button class="big-button" :class="`big-button__${action}`" @click="$emit(`${action}Comment`)">
-      {{ action }}
+      {{ action === 'edit' ? 'update' : action }}
     </button>
   </div>
 </template>
@@ -30,6 +30,11 @@
     text-align: end;
     margin-top: 0.5em;
 
+    @media (min-width: $min-desktop) {
+      width: auto;
+      margin-top: 0;
+    }
+
     .big-button {
       border: none;
       border-radius: 0.5em;
@@ -38,9 +43,14 @@
       padding: 0.65em 1.25em;
       text-transform: uppercase;
       font-weight: $font-weight-medium;
+      transition: filter 0.2s ease-in-out;
 
       &.big-button__send {
         padding: 0.85em 2em;
+      }
+
+      &:hover {
+        filter: opacity(0.33) drop-shadow(0 0 0 $light-grayish-blue);
       }
     }
   }

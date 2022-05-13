@@ -46,6 +46,11 @@
     outline: none;
     color: $dark-blue;
 
+    @media (min-width: $min-desktop) {
+      height: 6.5em;
+      min-height: 6.5em;
+    }
+
     &:focus-visible {
       border-color: $dark-blue;
     }
